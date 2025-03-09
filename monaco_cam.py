@@ -3,18 +3,12 @@ from ultralytics import YOLO
 import cv2
 import numpy as np
 import time
-#preferred version == 3.6.3
-# this is working on 3.6.3  output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()] with CV 2
-# this "SHOULD" work in python ==3.8 and higher [layer_name for layer_name in net.getUnconnectedOutLayersNames()]
 from sort import *
 import random
 import math
+import sys
 
-url1='rtmp://127.0.0.1/live/test2'
-url2='rtmp://127.0.0.1/live/test'# base IP http://192.168.0.39/cam-hi.jpg
-vid_url = "test_video3.mp4"
-urls = [vid_url]
-# urls = [url2]
+urls = []
 
 def random_color_list():
     rand_color_list = []
@@ -140,6 +134,9 @@ def print_image(frame, frame_id, name):
     out = exits.get(name)
     out.write(frame)
     cv2.imshow("Recognized"+str(name), frame)
+
+for i in range(1, len(sys.argv)):
+    urls.append(sys.argv[i])
 
 for url in urls:
     caps.append(cv2.VideoCapture(url))
