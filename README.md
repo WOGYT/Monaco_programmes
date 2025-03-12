@@ -9,6 +9,8 @@ Le programme n'a été testé que sous Windows mais il devrait aussi bien foncti
 Il y a deux types d'arguments possible:
 - "-d": vous donner un chemin d'accès sans guillemets vers un dossier contenant toutes les vidéos sur lesquelles vous voulez faire la reconnaissance. Le programme se charge d'aller chercher les vidéos.
 - "-f": vous donner les chemins d'accès sans guillemets vers les fichiers vidéos sur lesquelles vous voulez faire la reconnaissance.
+- 
+**Attention, le chemin d'accès ne doit pas comporter d'espaces, sinon il risque d'y avoir des problèmes pour la récupération**
 
 ### Compatibilité logicielle
 
