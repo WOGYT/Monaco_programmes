@@ -14,5 +14,13 @@ Il y a deux types d'arguments possible:
 
 ### Compatibilité logicielle
 
-Le programme a été testé sur Windows 11, avec python 3.9.5 et les modules avec les versions comme précisé dans le fichier "requierement.txt". Le programme ne fonctionne pas sur python <=3.12 à cause d'une incompatibilité de module entre numpy et scipy-image. 
+Le programme a été testé sur Windows 11, avec Python 3.9.5 sur un environement virtuel Conda et les modules avec les versions comme précisé dans le fichier "requierement.txt". Le programme ne fonctionne pas sur python <=3.12 à cause d'une incompatibilité de module entre numpy et scipy-image. 
 Sous la même installation python, le programme fonctionne sur Ubuntu 20.04.6 sous WSL. Aucun test n'a été effectué sur une autre distribition de Linux, y compris MacOS. 
+
+### Contributeur
+
+Aladdin Bensalah 
+
+Gabriel Legout
+
+Ce projet utilise une partie du module sort.py dont la licence figure à la racine du projet. 
