@@ -1,4 +1,3 @@
-from typing import Dict
 from ultralytics import YOLO
 import cv2
 import numpy as np
@@ -7,8 +6,6 @@ from sort import *
 import random
 import math
 import sys
-
-urls = []
 
 def random_color_list():
     rand_color_list = []
@@ -19,34 +16,6 @@ def random_color_list():
         rand_color_list.append((r, g, b))
     return rand_color_list
 
-sort_max_age = 5 
-sort_min_hits = 2
-sort_iou_thresh = 0.2
-tracker = Sort(max_age=sort_max_age,min_hits=sort_min_hits,iou_threshold=sort_iou_thresh)
-memo = {}
-rand_color_list = random_color_list()
-
-caps = []
-window_names = []
-exits = {}
-# Load the YOLO model
-model = YOLO("yolo11m.pt")
-classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck", "boat",
-              "traffic light", "fire hydrant", "stop sign", "parking meter", "bench", "bird", "cat",
-              "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "backpack", "umbrella",
-              "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat",
-              "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup",
-              "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli",
-              "carrot", "hot dog", "pizza", "donut", "cake", "chair", "sofa", "pottedplant", "bed",
-              "diningtable", "toilet", "tvmonitor", "laptop", "mouse", "remote", "keyboard", "cell phone",
-              "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors",
-              "teddy bear", "hair drier", "toothbrush"
-              ]
-
-# Load webcam
-font = cv2.FONT_HERSHEY_SIMPLEX
-starting_time = time.time()
-frame_id = 0
 
 def recognition(frame, frame_id, memo):
     results = model.predict(frame, augment=True, iou=0.7) #stream_buffer=True
@@ -135,42 +104,88 @@ def print_image(frame, frame_id, name):
     out.write(frame)
     cv2.imshow("Recognized"+str(name), frame)
 
-for i in range(1, len(sys.argv)):
-    urls.append(sys.argv[i])
 
-for url in urls:
-    caps.append(cv2.VideoCapture(url))
-    window_names.append(url)
-    returnvalue, frame = cv2.VideoCapture(url).read()
-    exits[url] = cv2.VideoWriter(str(url)+'.avi', cv2.VideoWriter_fourcc(*"MJPG"), 15, (frame.shape[1], frame.shape[0])) #str(random.randint(0, 1000))+
+if __name__ == "__main__":
+    urls = []
+    # get videos urls'
+    if len(sys.argv) >= 1:
+        if sys.argv[1].lower() == "-f":
+            print("Retrieving files from the given path")
+            for i in range(2, len(sys.argv)):
+                urls.append(sys.argv[i])
+        elif sys.argv[1].lower() == "-d":
+            print("Retrieving files from path directory")
+            L = os.listdir(sys.argv[2])
+            for i in L:
+                urls.append(i)
+        print(f"Retrieving successful urls={urls}")
+    else:
+        print("Error in the command: You must specify whether you are giving a directory or a list of files if either '-d' or '-f' ")
+        exit(0)
+    # init sort
+    sort_max_age = 5
+    sort_min_hits = 2
+    sort_iou_thresh = 0.2
+    tracker = Sort(max_age=sort_max_age, min_hits=sort_min_hits, iou_threshold=sort_iou_thresh)
+    memo = {}
+    rand_color_list = random_color_list()
 
-while True:
-    # Read webcam
-    # imgResp = urllib.request.urlopen(url)
-    # imgNp = np.array(bytearray(imgResp.read()), dtype=np.uint8)
-    i = 0
-    for cap in caps:
-        returnvalue, frame = cap.read()
-        # imgNp = np.array(bytearray(image), dtype=np.uint8)
-        #frame = cv2.imdecode(image, -1)
-        # Detecting objects
+    caps = []
+    window_names = []
+    exits = {}
+    # Load the YOLO model
+    model = YOLO("yolo11m.pt")
+    classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck", "boat",
+                  "traffic light", "fire hydrant", "stop sign", "parking meter", "bench", "bird", "cat",
+                  "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "backpack", "umbrella",
+                  "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat",
+                  "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup",
+                  "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli",
+                  "carrot", "hot dog", "pizza", "donut", "cake", "chair", "sofa", "pottedplant", "bed",
+                  "diningtable", "toilet", "tvmonitor", "laptop", "mouse", "remote", "keyboard", "cell phone",
+                  "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors",
+                  "teddy bear", "hair drier", "toothbrush"
+                  ]
 
-        # image recognition
-        if returnvalue:
-            frame, frame_id = recognition(frame, frame_id, memo)
+    # Load webcam
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    starting_time = time.time()
+    frame_id = 0
 
-            #image printing
-            print_image(frame, frame_id, window_names[i])
-        i += 1
-
-    key = cv2.waitKey(1)
-    if key == 27:
-        print("[button pressed] ///// [esc].")
-        j = 0
+    # init windows and video writers
+    for url in urls:
+        caps.append(cv2.VideoCapture(url))
+        window_names.append(url)
+        returnvalue, frame = cv2.VideoCapture(url).read()
+        exits[url] = cv2.VideoWriter(str(url) + '.avi', cv2.VideoWriter_fourcc(*"MJPG"), 15,
+                                     (frame.shape[1], frame.shape[0]))  # str(random.randint(0, 1000))+
+    while True:
+        # Read webcam
+        # imgResp = urllib.request.urlopen(url)
+        # imgNp = np.array(bytearray(imgResp.read()), dtype=np.uint8)
+        i = 0
         for cap in caps:
-            cap.release()
-            exits[window_names[j]].release()
-        print("[feedback] ///// Videocapturing succesfully stopped")
-        break
+            returnvalue, frame = cap.read()
+            # imgNp = np.array(bytearray(image), dtype=np.uint8)
+            #frame = cv2.imdecode(image, -1)
+            # Detecting objects
 
-cv2.destroyAllWindows()
+            # image recognition
+            if returnvalue:
+                frame, frame_id = recognition(frame, frame_id, memo)
+
+                #image printing
+                print_image(frame, frame_id, window_names[i])
+            i += 1
+
+        key = cv2.waitKey(1)
+        if key == 27:
+            print("[button pressed] ///// [esc].")
+            j = 0
+            for cap in caps:
+                cap.release()
+                exits[window_names[j]].release()
+            print("[feedback] ///// Videocapturing succesfully stopped")
+            break
+
+    cv2.destroyAllWindows()
