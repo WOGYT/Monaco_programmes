@@ -1,8 +1,8 @@
 # Tracking à l'aide de filtres de Kalman
 
 ### Installation
-Afin d'installer le programme, il faut vous munir de python 3.9.5 (seule version testé où tous les modules sont compatibles avec les versions demandés) et d'entrer la commande "pip install -r requirements.txt" dans un terminal.
-Le programme n'a été testé que sous Windows mais il devrait aussi bien fonctionner sous MacOS et Linux.
+Afin d'installer le programme, il faut vous munir de python 3.9.5 et d'entrer la commande "pip install -r requirements.txt" dans un terminal.
+Cette installation n'a été testé que sur Windows et Ubuntu. 
 
 ### Utilisation
 
