@@ -1,7 +1,8 @@
 # Tracking à l'aide de filtres de Kalman
 
 ### Installation
-Afin d'installer le programme, il faut vous munir de python 3.9.5 et d'entrer la commande "pip install -r requirements.txt" dans un terminal.
+Afin d'installer le programme, il faut cloner ce repo dans un dossier ou copier tout les fichiers de ce repo dans un dossier. Ensuite, il suffit d'installer Python 3.9.5 et une fois installé, d'entrer  la commande "pip install -r requirements.txt" dans un terminal.
+
 Cette installation n'a été testé que sur Windows et Ubuntu. 
 
 ### Utilisation
