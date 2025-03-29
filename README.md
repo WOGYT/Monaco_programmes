@@ -7,10 +7,12 @@ Cette installation n'a été testé que sur Windows et Ubuntu.
 
 ### Utilisation
 
-Il y a deux types d'arguments possible:
+Il suffit maintenant d'aller à la racine du projet puis d'entrer la commande "python monaco_cam.py" puis un des deux arguments ci-dessous: 
+
 - "-d": vous donner un chemin d'accès sans guillemets vers un dossier contenant toutes les vidéos sur lesquelles vous voulez faire la reconnaissance. Le programme se charge d'aller chercher les vidéos.
 - "-f": vous donner les chemins d'accès sans guillemets vers les fichiers vidéos sur lesquelles vous voulez faire la reconnaissance.
-- 
+
+Exemple: "python monaco_cam.py -f test_video.mp4"
 **Attention, le chemin d'accès ne doit pas comporter d'espaces, sinon il risque d'y avoir des problèmes pour la récupération**
 
 ### Compatibilité logicielle
