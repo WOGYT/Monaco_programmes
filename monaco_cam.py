@@ -17,8 +17,8 @@ def random_color_list():
     return rand_color_list
 
 
-def recognition(frame, frame_id, memo):
-    results = model.predict(frame, augment=True, iou=0.7) #stream_buffer=True
+def recognition(frame, frame_id, memo, verbose):
+    results = model.predict(frame, augment=True, iou=0.7, verbose=verbose) #stream_buffer=True
     dets_to_sort = np.empty((0,6))
     human_count = 0
     for r in results:
@@ -51,8 +51,8 @@ def recognition(frame, frame_id, memo):
     return frame, frame_id
 
 def process_objects(frame ,bbox, colors, identities, dico):
-    print(f"enumerate boxes={len(bbox)}")
-    print(f"bbox={bbox}")
+    # print(f"enumerate boxes={len(bbox)}")
+    # print(f"bbox={bbox}")
     mini_count = 0
     for i in range(len(bbox)):
         box = bbox[i]
@@ -95,9 +95,7 @@ def draw_trajectoire2(frame, dico, colors):
     return frame , dico        
 
 
-def print_image(frame, frame_id, name):
-    elapsed_time = time.time() - starting_time
-    fps = frame_id / elapsed_time
+def print_image(frame, name):
     # frame = cv2.putText(frame, "FPS: " + str(round(fps, 2)), (200, 200), font, .7, (0, 255, 255), 1)
     # frame = cv2.putText(frame, "press [esc] to exit", (40, 690), font, .45, (0, 255, 255), 1)
     out = exits.get(name)
@@ -108,10 +106,16 @@ def print_image(frame, frame_id, name):
 if __name__ == "__main__":
     urls = []
     # get videos urls'
-    if len(sys.argv) >= 1:
+    if (sys.argv[-1]) == "--debug":
+        last = 1
+        verbose = True
+    else:
+        last = 0
+        verbose = False
+    if len(sys.argv)-last >= 1:
         if sys.argv[1].lower() == "-f":
             print("Retrieving files from the given path")
-            for i in range(2, len(sys.argv)):
+            for i in range(2, len(sys.argv)-last):
                 urls.append(sys.argv[i])
         elif sys.argv[1].lower() == "-d":
             print("Retrieving files from path directory")
@@ -149,21 +153,32 @@ if __name__ == "__main__":
 
     # Load webcam
     font = cv2.FONT_HERSHEY_SIMPLEX
-    starting_time = time.time()
     frame_id = 0
+    length = 0
 
     # init windows and video writers
     for url in urls:
-        caps.append(cv2.VideoCapture(url))
+        cap = cv2.VideoCapture(url)
+        caps.append(cap)
         window_names.append(url)
-        returnvalue, frame = cv2.VideoCapture(url).read()
+        returnvalue, frame = cap.read()
         exits[url] = cv2.VideoWriter(str(url) + '.avi', cv2.VideoWriter_fourcc(*"MJPG"), 15,
                                      (frame.shape[1], frame.shape[0]))  # str(random.randint(0, 1000))+
+        length += int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    j = 0
+    timeleft = 0
+    len_urls = len(urls)
+    starting_time = time.time()
     while True:
+        j += 1
+        if j %5 == 0:
+            print(f"Estimated time left: {round((timeleft/j) // 60)}m{round((timeleft/7) % 60)}s")
+        frame_time = time.time()
         # Read webcam
         # imgResp = urllib.request.urlopen(url)
         # imgNp = np.array(bytearray(imgResp.read()), dtype=np.uint8)
         i = 0
+        atleastonetrue = False
         for cap in caps:
             returnvalue, frame = cap.read()
             # imgNp = np.array(bytearray(image), dtype=np.uint8)
@@ -172,20 +187,26 @@ if __name__ == "__main__":
 
             # image recognition
             if returnvalue:
-                frame, frame_id = recognition(frame, frame_id, memo)
+                atleastonetrue = True
+                frame, frame_id = recognition(frame, frame_id, memo, verbose)
 
                 #image printing
-                print_image(frame, frame_id, window_names[i])
+                print_image(frame, window_names[i])
             i += 1
-
+        if not atleastonetrue:
+            break
+        elapsed_time = time.time() - frame_time
+        timeleft += elapsed_time*(length - (j*len_urls))
         key = cv2.waitKey(1)
         if key == 27:
             print("[button pressed] ///// [esc].")
-            j = 0
             for cap in caps:
                 cap.release()
-                exits[window_names[j]].release()
+                exits[window_names[0]].release()
             print("[feedback] ///// Videocapturing succesfully stopped")
             break
 
+    total_time = time.time() - starting_time
+    print(f"Total time: {round(total_time//60)}m {round(total_time%60)}s ")
+    print(f"Number of frame detected: {j} which is equal to {round((j/30)//60)}m{round((j/30)%60)}s per video for a total of {len_urls} videos")
     cv2.destroyAllWindows()
