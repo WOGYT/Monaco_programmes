@@ -121,7 +121,8 @@ if __name__ == "__main__":
             print("Retrieving files from path directory")
             L = os.listdir(sys.argv[2])
             for i in L:
-                urls.append(i)
+                if i[-4:] == ".mp4":
+                    urls.append(i)
         print(f"Retrieving successful urls={urls}")
     else:
         print("Error in the command: You must specify whether you are giving a directory or a list of files if either '-d' or '-f' ")
