@@ -13,7 +13,7 @@ Il suffit maintenant d'aller à la racine du projet puis d'entrer la commande "p
 - "-f": vous donner les chemins d'accès sans guillemets vers les fichiers vidéos sur lesquelles vous voulez faire la reconnaissance.
 - "--debug": pour remettre les instructions de debug d'ultralytics. Cet argument doit être ajouté à la toute fin de la commande
 
-Peut importe l'argument utilisé, les fichiers doivent être au format .mp4. Bien que d'autres formats vidéos devrait fonctionner, pour des raisons de fiabilités et de facilité d'écriture du programme et des contraintes qui nous ont été fournis, nous avons choisi de tester uniquement sur des vidéos en .mp4. 
+Peut importe l'argument utilisé, les fichiers doivent être au format .mp4. Bien que d'autres formats vidéos devrait fonctionner, pour des raisons de fiabilités, de facilité d'écriture du programme et des contraintes qui nous ont été fournis, nous avons choisi de tester uniquement sur des vidéos en .mp4. 
 
 Exemple: "python monaco_cam.py -f test_video.mp4"
 
